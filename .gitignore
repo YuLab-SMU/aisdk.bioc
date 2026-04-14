@@ -4,4 +4,4 @@
 .RData
 *.tar.gz
 *.Rcheck
-
+Rplots*.pdf
