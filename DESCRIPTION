@@ -1,0 +1,18 @@
+Package: aisdk.bioc
+Title: Bioconductor Semantic Extensions for aisdk
+Version: 0.0.0.9000
+Authors@R: person("Yonghe", "Xia", , "xiayh17@gmail.com", role = c("aut", "cre"))
+Description: Bioconductor-oriented semantic adapters and workflow hints for
+    aisdk. This package extends the aisdk runtime with structured semantics
+    for classes such as SummarizedExperiment, SingleCellExperiment, and
+    GRanges without making the core package own domain-specific object logic.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 4.1.0)
+Imports: aisdk, methods, rlang
+Suggests: testthat (>= 3.0.0), knitr, rmarkdown, SummarizedExperiment,
+    SingleCellExperiment, GenomicRanges, IRanges, S4Vectors
+Config/testthat/edition: 3
+
