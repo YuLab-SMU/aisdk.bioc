@@ -160,6 +160,8 @@ list(
 - 减少 AI 对复杂对象的“幻觉”
 - 让 AI 的下一步动作更像懂对象的人
 
+当前稳定契约包含：对象身份（identity）、结构摘要（schema）、领域语义（semantics）、成本估计（cost estimate）、操作校验（action validation），以及可选的 workflow hints。workflow hints 只是**建议性的下一步提示**，不是自动编排引擎。更高级的能力（如 `peek`、`slice`、backend-aware disclosure）将在 runtime 稳定后逐步引入。
+
 ## 适合什么时候用
 
 当你希望 AI 在 live R session 中和这些对象协作时，这个包才真正有价值：
