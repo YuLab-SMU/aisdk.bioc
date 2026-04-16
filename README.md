@@ -6,6 +6,7 @@ Need the plain-language overview first?
 
 - 中文说明: [docs/understand-aisdk-bioc.md](docs/understand-aisdk-bioc.md)
 - Minimal framework diagram: [docs/diagrams/aisdk-bioc-framework-minimal.png](docs/diagrams/aisdk-bioc-framework-minimal.png)
+- Custom adapter guide: [docs/authoring-custom-adapters.md](docs/authoring-custom-adapters.md)
 
 It owns:
 
