@@ -22,20 +22,20 @@ register_bioc_semantic_components <- function(registry, include_workflow_hints =
 
 #' @keywords internal
 create_semantic_adapter <- function(...) {
-  getFromNamespace("create_semantic_adapter", "aisdk")(...)
+  aisdk::create_semantic_adapter(...)
 }
 
 #' @keywords internal
 call_object_accessor <- function(...) {
-  getFromNamespace("call_object_accessor", "aisdk")(...)
+  aisdk::call_object_accessor(...)
 }
 
 #' @keywords internal
 is_semantic_class <- function(...) {
-  getFromNamespace("is_semantic_class", "aisdk")(...)
+  aisdk::is_semantic_class(...)
 }
 
 #' @keywords internal
 as_preview_text <- function(...) {
-  getFromNamespace("as_preview_text", "aisdk")(...)
+  aisdk::as_preview_text(...)
 }

@@ -2,6 +2,11 @@
 
 `aisdk.bioc` is the Bioconductor extension package for `aisdk`.
 
+Need the plain-language overview first?
+
+- 中文说明: [docs/understand-aisdk-bioc.md](docs/understand-aisdk-bioc.md)
+- Minimal framework diagram: [docs/diagrams/aisdk-bioc-framework-minimal.png](docs/diagrams/aisdk-bioc-framework-minimal.png)
+
 It owns:
 
 - Bioconductor semantic adapters
@@ -10,4 +15,3 @@ It owns:
 
 The `aisdk` core package remains responsible for the runtime, session, tool,
 provider, and generic semantic adapter protocol layers.
-

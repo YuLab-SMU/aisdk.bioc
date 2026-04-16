@@ -113,7 +113,7 @@ create_summarized_experiment_semantic_adapter <- function() {
       )
     },
     provenance = function(obj) {
-      list(adapter = "summarized-experiment", package = "aisdk")
+      list(adapter = "summarized-experiment", package = "aisdk.bioc")
     },
     validate_action = function(obj, action) {
       if (identical(action, "materialize_all_assays")) {
@@ -207,7 +207,7 @@ create_single_cell_experiment_semantic_adapter <- function() {
       )
     },
     provenance = function(obj) {
-      list(adapter = "single-cell-experiment", package = "aisdk")
+      list(adapter = "single-cell-experiment", package = "aisdk.bioc")
     },
     validate_action = function(obj, action) {
       if (identical(action, "materialize_all_assays")) {
@@ -308,7 +308,7 @@ create_granges_semantic_adapter <- function() {
       )
     },
     provenance = function(obj) {
-      list(adapter = "granges", package = "aisdk")
+      list(adapter = "granges", package = "aisdk.bioc")
     },
     validate_action = function(obj, action) {
       if (identical(action, "materialize_ranges_table")) {

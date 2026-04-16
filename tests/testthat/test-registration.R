@@ -1,9 +1,5 @@
-if (!exists("create_semantic_adapter_registry", envir = asNamespace("aisdk"), inherits = FALSE)) {
-  testthat::skip("installed aisdk lacks semantic registry split API; load current aisdk source or install newer core")
-}
-
 test_that("register_bioc_semantic_components attaches Bioc adapters", {
-  registry <- getFromNamespace("create_semantic_adapter_registry", "aisdk")()
+  registry <- aisdk::create_semantic_adapter_registry()
 
   register_bioc_semantic_components(registry, include_workflow_hints = FALSE)
 
@@ -14,7 +10,7 @@ test_that("register_bioc_semantic_components attaches Bioc adapters", {
 })
 
 test_that("register_bioc_semantic_components can add workflow hints", {
-  registry <- getFromNamespace("create_semantic_adapter_registry", "aisdk")()
+  registry <- aisdk::create_semantic_adapter_registry()
 
   register_bioc_semantic_components(registry, include_workflow_hints = TRUE)
 
