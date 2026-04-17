@@ -106,3 +106,104 @@ test_that("GRanges adapter contract is stable", {
   prov <- adapter$provenance(gr)
   expect_identical(prov$package, "aisdk.bioc")
 })
+
+test_that("DESeqDataSet adapter contract is stable", {
+  testthat::skip_if_not_installed("DESeq2")
+  library(DESeq2, quietly = TRUE)
+
+  adapter <- create_deseq_dataset_semantic_adapter()
+
+  counts <- matrix(c(1, 5, 2, 6, 3, 7, 4, 8), nrow = 4)
+  coldata <- S4Vectors::DataFrame(condition = factor(c("A", "B")))
+  dds <- DESeq2::DESeqDataSetFromMatrix(
+    countData = counts,
+    colData = coldata,
+    design = ~condition
+  )
+
+  expect_true(adapter$supports(dds))
+  expect_false(adapter$supports("not-a-dds"))
+
+  info <- adapter$describe_identity(dds)
+  expect_identical(info$primary_class, "DESeqDataSet")
+  expect_equal(info$dimensions, c(4L, 2L))
+  expect_true("counts" %in% info$assays)
+  expect_identical(info$design, "~condition")
+  expect_false(info$has_size_factors)
+  expect_false(info$has_dispersions)
+
+  schema <- adapter$describe_schema(dds)
+  expect_identical(schema$kind, "DESeqDataSet")
+  expect_identical(schema$design, "~condition")
+  expect_true("condition" %in% schema$design_variables)
+
+  safety <- adapter$validate_action(dds, "materialize_counts")
+  expect_identical(safety$status, "warn")
+  expect_true(isTRUE(safety$expensive))
+
+  prov <- adapter$provenance(dds)
+  expect_identical(prov$package, "aisdk.bioc")
+})
+
+test_that("DelayedArray adapter contract is stable", {
+  testthat::skip_if_not_installed("DelayedArray")
+  library(DelayedArray, quietly = TRUE)
+
+  adapter <- create_delayed_array_semantic_adapter()
+  darr <- DelayedArray::DelayedArray(matrix(1:12, nrow = 3))
+
+  expect_true(adapter$supports(darr))
+  expect_false(adapter$supports("not-a-delayed-array"))
+
+  info <- adapter$describe_identity(darr)
+  expect_identical(info$primary_class, "DelayedArray")
+  expect_equal(info$dimensions, c(3L, 4L))
+  expect_true("matrix" %in% info$seed_class)
+  expect_false(info$is_sparse)
+
+  schema <- adapter$describe_schema(darr)
+  expect_identical(schema$kind, "DelayedArray")
+  expect_true("matrix" %in% schema$seed_class)
+  expect_equal(schema$seed_dimensions, c(3L, 4L))
+
+  safety <- adapter$validate_action(darr, "materialize_as_matrix")
+  expect_identical(safety$status, "warn")
+  expect_true(isTRUE(safety$expensive))
+
+  prov <- adapter$provenance(darr)
+  expect_identical(prov$package, "aisdk.bioc")
+})
+
+test_that("HDF5Array adapter contract is stable", {
+  testthat::skip_if_not_installed("HDF5Array")
+  library(HDF5Array, quietly = TRUE)
+
+  adapter <- create_hdf5_array_semantic_adapter()
+  h5_path <- tempfile(fileext = ".h5")
+  on.exit(unlink(h5_path), add = TRUE)
+  h5mat <- HDF5Array::writeHDF5Array(matrix(1:12, nrow = 3), filepath = h5_path, name = "counts")
+  h5_path <- normalizePath(h5_path, winslash = "/", mustWork = FALSE)
+
+  expect_true(adapter$supports(h5mat))
+  expect_false(adapter$supports(matrix(1:12, nrow = 3)))
+
+  info <- adapter$describe_identity(h5mat)
+  expect_identical(info$primary_class, "HDF5Array")
+  expect_equal(info$dimensions, c(3L, 4L))
+  expect_true("HDF5ArraySeed" %in% info$seed_class)
+  expect_identical(info$filepath, h5_path)
+  expect_identical(info$dataset_name, "/counts")
+
+  schema <- adapter$describe_schema(h5mat)
+  expect_identical(schema$kind, "HDF5Array")
+  expect_identical(schema$filepath, h5_path)
+  expect_identical(schema$dataset_name, "/counts")
+  expect_equal(schema$chunkdim, c(3L, 4L))
+
+  safety <- adapter$validate_action(h5mat, "materialize_full_array")
+  expect_identical(safety$status, "warn")
+  expect_true(isTRUE(safety$expensive))
+
+  prov <- adapter$provenance(h5mat)
+  expect_identical(prov$package, "aisdk.bioc")
+})
