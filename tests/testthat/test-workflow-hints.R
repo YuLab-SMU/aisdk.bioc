@@ -7,6 +7,9 @@ test_that("workflow hint names and priorities are stable", {
   register_bioc_semantic_components(registry, include_workflow_hints = TRUE)
 
   hints <- registry$list_workflow_hints()
+  expect_true("deseq-dataset-default" %in% hints)
+  expect_true("delayed-array-default" %in% hints)
+  expect_true("hdf5-array-default" %in% hints)
   expect_true("single-cell-experiment-default" %in% hints)
   expect_true("summarized-experiment-default" %in% hints)
   expect_true("granges-default" %in% hints)
@@ -63,4 +66,57 @@ test_that("GRanges workflow hint is advisory", {
   hint <- registry$resolve_workflow_hint(gr)
   expect_named(hint, c("workflow", "goal", "steps"))
   expect_identical(hint$workflow, "granges_default")
+})
+
+test_that("DESeqDataSet workflow hint is advisory", {
+  testthat::skip_if_not_installed("DESeq2")
+  library(DESeq2, quietly = TRUE)
+
+  registry <- aisdk::create_semantic_adapter_registry()
+  register_bioc_semantic_components(registry, include_workflow_hints = TRUE)
+
+  counts <- matrix(c(1, 5, 2, 6, 3, 7, 4, 8), nrow = 4)
+  coldata <- S4Vectors::DataFrame(condition = factor(c("A", "B")))
+  dds <- DESeq2::DESeqDataSetFromMatrix(
+    countData = counts,
+    colData = coldata,
+    design = ~condition
+  )
+
+  hint <- registry$resolve_workflow_hint(dds)
+  expect_named(hint, c("workflow", "goal", "steps"))
+  expect_identical(hint$workflow, "deseq_dataset_default")
+  expect_false("recommended_tools" %in% names(hint))
+})
+
+test_that("DelayedArray workflow hint is advisory", {
+  testthat::skip_if_not_installed("DelayedArray")
+  library(DelayedArray, quietly = TRUE)
+
+  registry <- aisdk::create_semantic_adapter_registry()
+  register_bioc_semantic_components(registry, include_workflow_hints = TRUE)
+
+  darr <- DelayedArray::DelayedArray(matrix(1:12, nrow = 3))
+
+  hint <- registry$resolve_workflow_hint(darr)
+  expect_named(hint, c("workflow", "goal", "steps"))
+  expect_identical(hint$workflow, "delayed_array_default")
+  expect_false("recommended_tools" %in% names(hint))
+})
+
+test_that("HDF5Array workflow hint is advisory", {
+  testthat::skip_if_not_installed("HDF5Array")
+  library(HDF5Array, quietly = TRUE)
+
+  registry <- aisdk::create_semantic_adapter_registry()
+  register_bioc_semantic_components(registry, include_workflow_hints = TRUE)
+
+  h5_path <- tempfile(fileext = ".h5")
+  on.exit(unlink(h5_path), add = TRUE)
+  h5mat <- HDF5Array::writeHDF5Array(matrix(1:12, nrow = 3), filepath = h5_path, name = "counts")
+
+  hint <- registry$resolve_workflow_hint(h5mat)
+  expect_named(hint, c("workflow", "goal", "steps"))
+  expect_identical(hint$workflow, "hdf5_array_default")
+  expect_false("recommended_tools" %in% names(hint))
 })
